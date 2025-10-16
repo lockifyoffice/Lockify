@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>lockify — snippets</title>
+  <meta name="color-scheme" content="light dark" />
+  <style>
+    :root { --fg:#0F172A; --muted:#64748B; --bg:#fff; --brand:#2563EB; --border:#E2E8F0; }
+    @media (prefers-color-scheme: dark) { :root { --fg:#E2E8F0; --muted:#94A3B8; --bg:#0B1220; --border:#1F2937; } }
+    * { box-sizing: border-box; }
+    body { margin: 0 auto; max-width: 860px; padding: 24px; background: var(--bg); color: var(--fg); font: 16px/1.6 system-ui, -apple-system, Segoe UI, Roboto, Arial; }
+    header { display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--border); padding-bottom:12px; margin-bottom:16px; }
+    .brand { font-weight: 800; }
+    a { color: var(--fg); text-decoration: none; }
+    .muted { color: var(--muted); }
+    .card { border: 1px solid var(--border); border-radius: 10px; padding: 16px; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand">lockify</div>
+    <nav><a href="./">Voltar ao início</a></nav>
+  </header>
+
+  <main>
+    <h1>Snippets</h1>
+    <p class="muted">Esta página vai listar os snippets (Node.js e Python) com botão de copiar.</p>
+
+    <div class="card">
+      Em breve adicionaremos o primeiro snippet: “Gerar chave 32 bytes (base64) — AES-256/JWT”.
+    </div>
+  </main>
+</body>
+</html>
