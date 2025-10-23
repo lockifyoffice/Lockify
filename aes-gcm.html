@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" href="favicon.png?v=3" type="image/png" />
+  <title>lockify — AES-256-GCM (encrypt/decrypt)</title>
+  <meta name="color-scheme" content="light dark" />
+  <style>
+    :root { --fg:#E2E8F0; --muted:#94A3B8; --bg:#0B1220; --brand:#2563EB; --border:#1F2937; --code-bg:#0A0F1A; }
+    * { box-sizing: border-box; }
+    body { margin: 0 auto; max-width: 860px; padding: 24px; background: var(--bg); color: var(--fg); font: 16px/1.6 system-ui, -apple-system, Segoe UI, Roboto, Arial; }
+
+    /* Header (igual às outras páginas) */
+    header { display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--border); padding:16px 24px; margin-bottom:16px; }
+    .brand { display:inline-flex; align-items:center; gap:8px; font-weight:800; letter-spacing:.2px; }
+    .brand img { width:22px; height:22px; border-radius:6px; box-shadow:0 0 0 1px var(--border); }
+    header nav a { color: var(--fg); text-decoration: none; border: 1px solid var(--border); padding: 8px 12px; border-radius: 10px; }
+    header nav a:hover { border-color: var(--brand); color: var(--brand); background: rgba(37,99,235,.10); }
+
+    /* Conteúdo */
+    .muted { color: var(--muted); }
+    .tabs { display:flex; gap:8px; margin: 16px 0; }
+    .tab { padding: 8px 12px; border:1px solid var(--border); border-radius:10px; background:#111827; color:#E5E7EB; cursor:pointer; }
+    .tab.active { border-color: var(--brand); }
+    pre { background: var(--code-bg); color:#e6e6e6; padding: 14px; border-radius: 10px; overflow: auto; }
+    button.copy { margin-top: 10px; padding: 8px 12px; border-radius:10px; border:1px solid var(--border); background: var(--brand); color:#fff; cursor:pointer; }
+    .card { border: 1px solid var(--border); border-radius: 10px; padding: 16px; margin-top: 16px; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand"><img src="favicon.png" alt="lockify" width="22" height="22" /> <span>lockify</span></div>
+    <nav>
+      <a href="./">Início</a> ·
+      <a href="./snippets.html">Gerar chave 32B</a> ·
+      <a href="./salt-nonce.html">SALT e Nonce</a>
+    </nav>
+  </header>
+
+  <main>
+    <h1>AES-256-GCM — encrypt/decrypt (texto)</h1>
+    <p class="muted">Use IV único (12 bytes) por cifra. Payload: IV(12) + CT + TAG(16), tudo em base64.</p>
+
+    <div class="tabs">
+      <button class="tab active" data-lang="node">Node.js</button>
+      <button class="tab" data-lang="python">Python</button>
+    </div>
+
+    <pre><code id="code"></code></pre>
+    <button class="copy" id="copy">Copiar</button>
+
+    <div class="card muted">
+      Dicas: não reutilize IV com a mesma chave. Serialize IV+CT+TAG juntos. AAD (dados adicionais) é opcional.
+    </div>
+  </main>
+
+  <script>
+    const snippets = {
+      node:
+`const crypto = require('crypto');
+
+function encryptGCM(plaintext, keyB64, aad){
+  const key = Buffer.from(keyB64, 'base64'); // 32 bytes (AES-256)
+  const iv = crypto.randomBytes(12);
+  const cipher = crypto.createCipheriv('aes-256-gcm', key, iv);
+  if (aad) cipher.setAAD(Buffer.from(aad, 'utf8'));
+  const ct = Buffer.concat([cipher.update(plaintext, 'utf8'), cipher.final()]);
+  const tag = cipher.getAuthTag();
+  return Buffer.concat([iv, ct, tag]).toString('base64');
+}
+
+function decryptGCM(payloadB64, keyB64, aad){
+  const key = Buffer.from(keyB64, 'base64');
+  const buf = Buffer.from(payloadB64, 'base64');
+  const iv  = buf.subarray(0, 12);
+  const tag = buf.subarray(buf.length - 16);
+  const ct  = buf.subarray(12, buf.length - 16);
+  const decipher = crypto.createDecipheriv('aes-256-gcm', key, iv);
+  if (aad) decipher.setAAD(Buffer.from(aad, 'utf8'));
+  decipher.setAuthTag(tag);
+  return Buffer.concat([decipher.update(ct), decipher.final()]).toString('utf8');
+}
+
+// Exemplo:
+// const keyB64 = crypto.randomBytes(32).toString('base64');
+// const payload = encryptGCM('segredo', keyB64);
+// const plain = decryptGCM(payload, keyB64);`,
+      python:
+`# pip install cryptography
+import os, base64
+from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
+
+def encrypt_gcm(plaintext: str, key_b64: str, aad: str | None = None) -> str:
+    key = base64.b64decode(key_b64)  # 32 bytes
+    iv = os.urandom(12)
+    encryptor = Cipher(algorithms.AES(key), modes.GCM(iv)).encryptor()
+    if aad:
+        encryptor.authenticate_additional_data(aad.encode())
+    ct = encryptor.update(plaintext.encode()) + encryptor.finalize()
+    return base64.b64encode(iv + ct + encryptor.tag).decode()
+
+def decrypt_gcm(payload_b64: str, key_b64: str, aad: str | None = None) -> str:
+    key = base64.b64decode(key_b64)
+    data = base64.b64decode(payload_b64)
+    iv, tag, ct = data[:12], data[-16:], data[12:-16]
+    decryptor = Cipher(algorithms.AES(key), modes.GCM(iv, tag)).decryptor()
+    if aad:
+        decryptor.authenticate_additional_data(aad.encode())
+    return (decryptor.update(ct) + decryptor.finalize()).decode()
+
+# Exemplo:
+# key_b64 = base64.b64encode(os.urandom(32)).decode()
+# payload = encrypt_gcm("segredo", key_b64)
+# plain = decrypt_gcm(payload, key_b64)`
+    };
+
+    let current = 'node';
+    const codeEl = document.getElementById('code');
+    const render = () => { codeEl.textContent = snippets[current]; };
+    render();
+
+    document.querySelectorAll('.tab').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        current = btn.dataset.lang;
+        render();
+      });
+    });
+
+    document.getElementById('copy').addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(codeEl.textContent);
+        const btn = document.getElementById('copy');
+        const prev = btn.textContent; btn.textContent = 'Copiado!';
+        setTimeout(() => btn.textContent = prev, 1200);
+      } catch {
+        alert('Não foi possível copiar. Copie manualmente.');
+      }
+    });
+  </script>
+</body>
+</html>
