@@ -33,17 +33,20 @@ header nav a.current { background: var(--brand); color: #fff; border-color: var(
   </style>
 </head>
 <body>
-  <header>
-    <div class="brand"><img src="favicon.png" alt="lockify" width="22" height="22" /> <span>lockify</span></div>
-   <nav>
-  <a href="./">Início</a> ·
-  <a href="./snippets.html">Gerar chave 32B</a> ·
-  <a href="./salt-nonce.html" class="current">SALT e Nonce</a> ·
-  <a href="./aes-gcm.html">AES‑GCM</a> ·
-  <a href="./argon2id.html">Argon2id</a> ·
-  <a href="./kdf-argon2id.html">KDF Argon2id</a>
-</nav>
-  </header>
+ <header>
+  <div class="brand">
+    <img src="favicon.png" alt="lockify" width="22" height="22" />
+    <span>lockify</span>
+  </div>
+  <nav>
+    <a href="./">Início</a>
+    <a href="./snippets.html">Gerar chave 32B</a>
+    <a href="./salt-nonce.html" class="current">SALT e Nonce</a>
+    <a href="./aes-gcm.html">AES‑GCM</a>
+    <a href="./argon2id.html">Argon2id</a>
+    <a href="./kdf-argon2id.html">KDF Argon2id</a>
+  </nav>
+</header>
 
   <main>
     <h1>Gerar SALT (16 bytes, hex) e NONCE GCM (12 bytes, base64)</h1>
