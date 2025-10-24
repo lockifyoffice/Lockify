@@ -30,6 +30,14 @@ padding:16px 24px; margin-bottom:16px;
 header nav a { color: var(--fg); text-decoration: none; border: 1px solid var(--border); padding: 8px 12px; border-radius: 10px; }
 header nav a:hover { border-color: var(--brand); color: var(--brand); background: rgba(37,99,235,.10); }
 header nav a.current { background: var(--brand); color: #fff; border-color: var(--brand); }
+    /* nav em pílulas e com quebra elegante */
+header nav { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+header nav a { display: inline-block; border: 1px solid var(--border); padding: 8px 12px; border-radius: 10px; color: var(--fg); text-decoration: none; }
+header nav a:hover { border-color: var(--brand); color: var(--brand); background: rgba(37,99,235,.10); }
+header nav a.current { background: var(--brand); color: #fff; border-color: var(--brand); }
+
+/* largura um pouco maior para caber mais links */
+body { max-width: 980px; }
   </style>
 </head>
 <body>
