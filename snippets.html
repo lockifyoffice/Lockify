@@ -30,6 +30,16 @@ padding:16px 24px; margin-bottom:16px;
 header nav a { color: var(--fg); text-decoration: none; border: 1px solid var(--border); padding: 8px 12px; border-radius: 10px; }
 header nav a:hover { border-color: var(--brand); color: var(--brand); background: rgba(37,99,235,.10); }
 header nav a.current { background: var(--brand); color: #fff; border-color: var(--brand); }
+    /* Ajuste de largura da página */
+body { max-width: 980px; }
+
+/* Nav em pílulas com quebra elegante */
+header nav { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+header nav a { display: inline-block; border: 1px solid var(--border); padding: 8px 12px; border-radius: 10px; color: var(--fg); text-decoration: none; }
+header nav a:hover { border-color: var(--brand); color: var(--brand); background: rgba(37,99,235,.10); }
+
+/* Link ativo */
+header nav a.current { background: var(--brand); color: #fff; border-color: var(--brand); }
   </style>
 </head>
 <body>
