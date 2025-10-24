@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" href="favicon.png?v=3" type="image/png" />
+  <title>lockify — KDF Argon2id (derivar chave 32B)</title>
+  <meta name="color-scheme" content="light dark" />
+  <style>
+    :root { --fg:#E2E8F0; --muted:#94A3B8; --bg:#0B1220; --brand:#2563EB; --border:#1F2937; --code-bg:#0A0F1A; }
+    * { box-sizing: border-box; }
+    body { margin: 0 auto; max-width: 860px; padding: 24px; background: var(--bg); color: var(--fg); font: 16px/1.6 system-ui, -apple-system, Segoe UI, Roboto, Arial; }
+
+    /* Header (igual às outras páginas) */
+    header { display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--border); padding:16px 24px; margin-bottom:16px; }
+    .brand { display:inline-flex; align-items:center; gap:8px; font-weight:800; letter-spacing:.2px; }
+    .brand img { width:22px; height:22px; border-radius:6px; box-shadow:0 0 0 1px var(--border); }
+    header nav a { color: var(--fg); text-decoration: none; border: 1px solid var(--border); padding: 8px 12px; border-radius: 10px; }
+    header nav a:hover { border-color: var(--brand); color: var(--brand); background: rgba(37,99,235,.10); }
+    header nav a.current { background: var(--brand); color:#fff; border-color: var(--brand); }
+
+    /* Conteúdo */
+    .muted { color: var(--muted); }
+    .tabs { display:flex; gap:8px; margin: 16px 0; }
+    .tab { padding: 8px 12px; border:1px solid var(--border); border-radius:10px; background:#111827; color:#E5E7EB; cursor:pointer; }
+    .tab.active { border-color: var(--brand); }
+    pre { background: var(--code-bg); color:#e6e6e6; padding: 14px; border-radius: 10px; overflow: auto; }
+    button.copy { margin-top: 10px; padding: 8px 12px; border-radius:10px; border:1px solid var(--border); background: var(--brand); color:#fff; cursor:pointer; }
+    .card { border: 1px solid var(--border); border-radius: 10px; padding: 16px; margin-top: 16px; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand"><img src="favicon.png" alt="lockify" width="22" height="22" /> <span>lockify</span></div>
+    <nav>
+      <a href="./">Início</a> ·
+      <a href="./snippets.html">Gerar chave 32B</a> ·
+      <a href="./salt-nonce.html">SALT e Nonce</a> ·
+      <a href="./aes-gcm.html">AES‑GCM</a> ·
+      <a href="./argon2id.html">Argon2id</a> ·
+      <a href="./kdf-argon2id.html" class="current">KDF Argon2id</a>
+    </nav>
+  </header>
+
+  <main>
+    <h1>KDF Argon2id — derivar chave 32 bytes (para AES)</h1>
+    <p class="muted">Derive uma chave de 32 bytes a partir de uma senha/passphrase. Guarde o salt junto do dado cifrado. Ajuste memória/tempo ao seu servidor.</p>
+
+    <div class="tabs">
+      <button class="tab active" data-lang="node">Node.js</button>
+      <button class="tab" data-lang="python">Python</button>
+    </div>
+
+    <pre><code id="code"></code></pre>
+    <button class="copy" id="copy">Copiar</button>
+
+    <div class="card muted">
+      Recomendações:
+      • Salt: 16 bytes (único por derivação). • Parâmetros iniciais: memória 64 MiB, timeCost 3, parallelism 1.
+      • Use a chave (32B) com AES‑256‑GCM e IV único (12B). Para armazenar senhas de usuário, use Argon2id (hash/verify), não KDF.
+    </div>
+  </main>
+
+  <script>
+    const snippets = {
+      node:
+`// npm i argon2
+const argon2 = require('argon2');
+const crypto = require('crypto');
+
+async function deriveKeyFromPassword(password, saltB64) {
+  const salt = saltB64 ? Buffer.from(saltB64, 'base64') : crypto.randomBytes(16);
+  const key = await argon2.hash(password, {
+    type: argon2.argon2id,
+    memoryCost: 65536,    // 64 MiB
+    timeCost: 3,
+    parallelism: 1,
+    salt,
+    hashLength: 32,       // 32 bytes -> AES-256
+    raw: true,            // retorna Buffer cru
+  });
+  return { keyB64: Buffer.from(key).toString('base64'), saltB64: salt.toString('base64') };
+}
+
+// Exemplo:
+// (async () => {
+//   const { keyB64, saltB64 } = await deriveKeyFromPassword('minha passphrase');
+//   console.log({ keyB64, saltB64 });
+// })();`,
+      python:
+`# pip install argon2-cffi
+import os, base64
+from argon2.low_level import hash_secret_raw, Type
+
+def derive_key_from_password(password: str, salt_b64: str | None = None):
+    salt = base64.b64decode(salt_b64) if salt_b64 else os.urandom(16)
+    key = hash_secret_raw(
+        password.encode(),
+        salt,
+        time_cost=3,
+        memory_cost=65536,  # 64 MiB
+        parallelism=1,
+        hash_len=32,        # 32 bytes -> AES-256
+        type=Type.ID
+    )
+    return base64.b64encode(key).decode(), base64.b64encode(salt).decode()
+
+# Exemplo:
+# key_b64, salt_b64 = derive_key_from_password("minha passphrase")
+# print(key_b64, salt_b64)`
+    };
+
+    let current = 'node';
+    const codeEl = document.getElementById('code');
+    const render = () => { codeEl.textContent = snippets[current]; };
+    render();
+
+    document.querySelectorAll('.tab').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        current = btn.dataset.lang;
+        render();
+      });
+    });
+
+    document.getElementById('copy').addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(codeEl.textContent);
+        const btn = document.getElementById('copy');
+        const prev = btn.textContent; btn.textContent = 'Copiado!';
+        setTimeout(() => btn.textContent = prev, 1200);
+      } catch {
+        alert('Não foi possível copiar. Copie manualmente.');
+      }
+    });
+  </script>
+</body>
+</html>
