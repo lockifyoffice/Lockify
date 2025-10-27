@@ -3,36 +3,17 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link rel="icon" href="favicon.png?v=3" type="image/png" />
-  <link rel="stylesheet" href="css/site.css?v=1" />
-  <title>lockify — Snippets</title>
-  <meta name="color-scheme" content="light dark" />
-  
-</head>
-<body>
-  <header>
-    <div class="brand"><img src="favicon.png" alt="lockify" width="22" height="22" /> <span>lockify</span></div>
-    <nav> 
-      <a href="./">Início</a> 
-      <a href="./snippets-index.html" class="current">Snippets</a> 
-      <a href="https://github.com/lockifyoffice/lockify" target="_blank" rel="noopener">GitHub</a> 
-    </nav>
-  </header>
-
-  <main>
-    <!doctype html>
-<html lang="pt-BR">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="icon" href="favicon.png?v=1" type="image/png" />
-  <link rel="stylesheet" href="css/site.css?v=4" />
+  <link rel="stylesheet" href="css/site.css?v=5" />
   <title>lockify — Snippets</title>
   <meta name="color-scheme" content="light dark" />
 </head>
 <body>
   <header>
-    <div class="brand"><img src="favicon.png" alt="lockify" width="22" height="22" /> <span>lockify</span></div>
+    <div class="brand">
+      <img src="favicon.png" alt="lockify" width="22" height="22" />
+      <span>lockify</span>
+    </div>
     <nav>
       <a href="./">Início</a>
       <a href="./snippets-index.html" class="current">Snippets</a>
@@ -49,22 +30,27 @@
         <a href="./snippets.html">Gerar chave 32B (base64)</a>
         <p>Para AES‑256/JWT. CSPRNG.</p>
       </div>
+
       <div class="card">
         <a href="./salt-nonce.html">SALT (16B, hex) e NONCE GCM (12B, b64)</a>
         <p>Salt para KDFs e IV único para AES‑GCM.</p>
       </div>
+
       <div class="card">
         <a href="./aes-gcm.html">AES‑256‑GCM (encrypt/decrypt)</a>
         <p>IV(12) + CT + TAG(16), tudo base64.</p>
       </div>
+
       <div class="card">
         <a href="./argon2id.html">Argon2id (hash/verify)</a>
         <p>Armazenamento seguro de senhas.</p>
       </div>
+
       <div class="card">
         <a href="./kdf-argon2id.html">KDF Argon2id (derivar chave 32B)</a>
         <p>Chave para AES‑256 a partir de senha.</p>
       </div>
+
       <div class="card">
         <a href="./jwt.html">JWT (HS256) — secret + token</a>
         <p>Gere segredo e assine tokens.</p>
