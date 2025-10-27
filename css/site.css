@@ -96,3 +96,10 @@ color: #fff;
 border-color: var(--brand);
 }
 .btn + .btn { margin-left: 8px; }
+
+/* Cards e grid para a página Snippets */
+.grid { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); margin-top: 16px; }
+.card { border: 1px solid var(--border); border-radius: 12px; padding: 14px; background: #0C1524; }
+.card a { color: var(--fg); text-decoration: none; font-weight: 600; }
+.card a:hover { color: var(--brand); }
+.card p { margin: 6px 0 0; color: var(--muted); font-size: 14px; }
