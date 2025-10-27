@@ -1,0 +1,87 @@
+/* =========================
+   lockify — CSS global
+   ========================= */
+
+/* Tokens e base */
+:root {
+  --fg:#E2E8F0;
+  --muted:#94A3B8;
+  --bg:#0B1220;
+  --brand:#2563EB;
+  --border:#1F2937;
+  --code-bg:#0A0F1A;
+}
+
+* { box-sizing: border-box; }
+html { color-scheme: light dark; }
+
+body {
+  margin: 0 auto;
+  max-width: 980px;              /* largura confortável para o conteúdo */
+  padding: 24px;
+  background: var(--bg);
+  color: var(--fg);
+  font: 16px/1.6 system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", sans-serif;
+}
+
+/* =========================
+   Header e navegação
+   ========================= */
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--border);
+  padding: 16px 24px;
+  margin-bottom: 16px;
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 800;
+  letter-spacing: .2px;
+}
+
+.brand img {
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  box-shadow: 0 0 0 1px var(--border);
+}
+
+header nav {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+header nav a {
+  display: inline-block;
+  border: 1px solid var(--border);
+  padding: 8px 12px;
+  border-radius: 10px;
+  color: var(--fg);
+  text-decoration: none;
+}
+
+header nav a:hover {
+  border-color: var(--brand);
+  color: var(--brand);
+  background: rgba(37,99,235,.10);
+}
+
+header nav a.current {
+  background: var(--brand);
+  color: #fff;
+  border-color: var(--brand);
+}
+
+/* =========================
+   Botões (home/cta)
+   ========================= */
+.btn {
+  display: inline-block;
+  margin-top: 12px;
+  padding: 10px 14px;
